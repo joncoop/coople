@@ -1,0 +1,188 @@
+<style>
+    div {
+        margin: 20px;
+    }
+
+    table.board {
+        empty-cells: show;
+        table-layout: fixed;
+        width: 180px;
+    }
+
+    table.board td {
+        font-size: 24px;
+        border: 1px solid black;
+        margin: 5px;
+        height: 1.5em;
+        padding: 5px;
+        text-align: center;
+    }
+</style>
+
+<script>
+    // random word based on date/time seed?
+    var word = 'swift';
+    var guess = '';
+    turn = 0;
+    limit = 6;
+
+    PERFECT = 2;
+    INCLUDED = 1;
+    WRONG = 0;
+
+    PLAYING = 0
+    WIN = 1
+    LOSE = 2
+
+    GREEN = '#55FF55';
+    YELLOW = '#FFFF55';
+    GRAY = '#BBBBBB';
+
+    document.addEventListener('keydown', logKey);
+
+    function logKey(e) {
+        code = e.keyCode;
+        
+        if (code >= 65 && code <= 90) {
+            code += 32;
+        }
+
+        if (code >= 97 && code <= 122) {
+            letter = String.fromCharCode(code);
+            guess += letter;
+            update();
+        }
+        else if (code == 8) {
+            guess = guess.substring(0, guess.length - 1);
+            update();
+        }
+        else if (code == 13) {
+            check();
+        }
+    }
+
+    function update() {
+        r = turn;
+
+        for (c = 0; c < word.length; c++) {
+            id = 'r' + r + 'c' + c;
+            square = document.getElementById(id);
+
+            letter = guess.substring(c, c + 1);
+
+            square.innerHTML = letter.toUpperCase();
+        }
+    }
+
+    function check() {
+        if (guess.length < word.length) {
+            return;
+        }
+
+        result = [WRONG, WRONG, WRONG, WRONG, WRONG];
+        unguessed = "";
+        checkAgain = "";
+        
+        for (i = 0; i <  word.length; i++) {
+            guessLetter = guess.substring(i, i + 1);
+            actualLetter = word.substring(i, i + 1);
+
+            if (guessLetter == actualLetter) {
+                result[i] = PERFECT;
+            }
+            else {
+                checkAgain += guessLetter;
+                unguessed += actualLetter;
+            }
+        }
+     
+        for (i = 0; i < word.length; i++) {
+            guessLetter = guess.substring(i, i + 1);
+            actualLetter = word.substring(i, i + 1);
+
+            notPerfect = guessLetter !== actualLetter;
+            notGuessed = unguessed.includes(guessLetter);
+
+            if (notPerfect && notGuessed) {
+                result[i] = INCLUDED;
+            }
+        }
+
+        r = turn;
+        for (var c = 0; c < word.length; c++) {
+            id = 'r' + r + 'c' + c;
+
+            if (result[c] === PERFECT) {
+                color = GREEN;
+            }
+            else if (result[c] === INCLUDED) {
+                color = YELLOW;
+            }
+            else {
+                color = GRAY;
+            }
+
+            document.getElementById(id).style.backgroundColor = color;
+        }
+
+        advance();
+    }
+
+    function advance() {
+        guess = '';
+        turn += 1;
+
+        if (turn === limit) {
+            alert('Game Over')
+        }
+    }
+</script>
+
+<body>
+
+    <table class='board'>
+        <tr>
+            <td id='r0c0'></td>
+            <td id='r0c1'></td>
+            <td id='r0c2'></td>
+            <td id='r0c3'></td>
+            <td id='r0c4'></td>
+        </tr>
+        <tr>
+            <td id='r1c0'></td>
+            <td id='r1c1'></td>
+            <td id='r1c2'></td>
+            <td id='r1c3'></td>
+            <td id='r1c4'></td>
+        </tr>
+        <tr>
+            <td id='r2c0'></td>
+            <td id='r2c1'></td>
+            <td id='r2c2'></td>
+            <td id='r2c3'></td>
+            <td id='r2c4'></td>
+        </tr>
+        <tr>
+            <td id='r3c0'></td>
+            <td id='r3c1'></td>
+            <td id='r3c2'></td>
+            <td id='r3c3'></td>
+            <td id='r3c4'></td>
+        </tr>
+        <tr>
+            <td id='r4c0'></td>
+            <td id='r4c1'></td>
+            <td id='r4c2'></td>
+            <td id='r4c3'></td>
+            <td id='r4c4'></td>
+        </tr>
+        <tr>
+            <td id='r5c0'></td>
+            <td id='r5c1'></td>
+            <td id='r5c2'></td>
+            <td id='r5c3'></td>
+            <td id='r5c4'></td>
+        </tr>
+    </table>
+
+</body>
